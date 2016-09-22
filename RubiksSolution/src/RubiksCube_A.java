@@ -53,6 +53,12 @@ public class RubiksCube_A {
         
     }
     
+    public RubiksCube_A( BitSet bitCube, int nameNode ) 
+    {
+        this.bitCube = bitCube;
+        this.nameNode = nameNode;
+    }
+    
     public String printRubiks (){
         String text = "";
         for (int i = 0; i < 144; i++) {

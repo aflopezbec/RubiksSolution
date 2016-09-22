@@ -13,6 +13,94 @@ import java.util.BitSet;
  */
 public class Tools {
     
+    public static BitSet RandomCube(int level){
+        String pathNewCube = "";
+        BitSet cube = originalCube();
+        for (int i = 0; i < level; i++) {
+            int indexrandom = (int)(Math.random()*5);
+            switch (indexrandom){
+                case 0: cube = MoveLPrime(cube); pathNewCube+="L' "; break;
+                case 1: cube = MoveUPrime(cube); pathNewCube+="U' "; break;
+                case 2: cube = MoveBPrime(cube); pathNewCube+="B' "; break;
+                case 3: cube = MoveDPrime(cube); pathNewCube+="D' "; break;
+                case 4: cube = MoveFPrime(cube); pathNewCube+="F' "; break;
+                case 5: cube = MoveRPrime(cube); pathNewCube+="R' "; break;
+            }
+        }    
+        System.out.println("Camino random: "+pathNewCube);  
+        //cube.printArrayCube();
+        return cube;
+    }
+    
+    public static BitSet moveCube(Long node, BitSet cubeArray){
+        
+        //long module = node%18;
+        long module = node%6;//6
+        long tmp = 0;
+        if (module == 0) tmp=4;
+        else if (module == 1) tmp=5;
+        else tmp = module-2;
+        
+//        System.out.println("move "+tmp);
+//        cube.printArrayCube();
+        
+        if (tmp==0) return MoveL(cubeArray);
+        if (tmp==1) return MoveU(cubeArray);
+        if (tmp==2) return MoveB(cubeArray);
+        if (tmp==3) return MoveD(cubeArray);
+        if (tmp==4) return MoveF(cubeArray);
+        if (tmp==5) return MoveR(cubeArray);
+        System.out.println("Error, Movimiento invalido: "+tmp);
+        System.exit(0);
+        return null;
+    }
+    
+    public static BitSet moveCube(int tmp, BitSet cubeArray){
+        if (tmp==0) return MoveL(cubeArray);
+        if (tmp==1) return MoveU(cubeArray);
+        if (tmp==2) return MoveB(cubeArray);
+        if (tmp==3) return MoveD(cubeArray);
+        if (tmp==4) return MoveF(cubeArray);
+        if (tmp==5) return MoveR(cubeArray);
+        System.out.println("Error, Movimiento invalido: "+tmp);
+        System.exit(0);
+        return null;
+    }
+    
+    public static BitSet originalCube( ) 
+    {   //Create base cube:: UP LEFT FRONT RIGHT BACK DOWN
+        // Face UP: White (000) 0:0-24
+        // Face LEFT: Green (001) 24-48
+        // Face FRONT: Red (010) 48-72
+        // Face RIGTH: Blue (100) 72-96
+        // Face BACK: ORANGE (110) 96-120
+        // Face DOWN: Yellow (111) 120-144
+        
+        BitSet bitCube = new BitSet();
+        //GREEEN
+        for (int i = 26; i < 48; i+=3) {
+            bitCube.set(i);
+        }
+        //RED
+        for (int i = 49; i < 72; i+=3) {
+            bitCube.set(i);
+        }
+        //BLUE
+        for (int i = 72; i < 96; i+=3) {
+            bitCube.set(i);
+        }
+        //ORANGE
+        for (int i = 96; i < 120; i+=3) {
+            bitCube.set(i);
+            bitCube.set(i+1);
+        }
+        //YELLOW
+        for (int i = 120; i < 144; i++) {
+            bitCube.set(i);
+        }
+        return bitCube;
+    }
+    
     private static void cBits(BitSet bitCube, BitSet current,
             int x,int y,int z,int xp,int yp,int zp){
         bitCube.set(x, current.get(xp));
