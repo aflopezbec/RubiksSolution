@@ -1,6 +1,3 @@
-
-import java.util.BitSet;
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -13,11 +10,28 @@ import java.util.BitSet;
  */
 public class Tools {
     
-    public static BitSet RandomCube(int level){
+    
+    
+    public static boolean getBit(int pos,byte cube[]) {
+        return (cube[pos / 8] & (1 << (pos % 8))) != 0;
+    }
+    
+    public static void setBit(int pos, boolean b,byte cube[]) {
+        byte b8 = cube[pos / 8];
+        byte posBit = (byte)(1 << (pos % 8));
+        if (b) {
+            b8 |= posBit;
+        } else {
+            b8 &= (255 - posBit);
+        }
+        cube[pos / 8] = b8;
+    }
+    
+    public static byte[] RandomCube(int level){
         String pathNewCube = "";
-        BitSet cube = originalCube();
+        byte cube[] = originalCube();
         for (int i = 0; i < level; i++) {
-            int indexrandom = (int)(Math.random()*5);
+            byte indexrandom = (byte)(Math.random()*6);
             switch (indexrandom){
                 case 0: cube = MoveLPrime(cube); pathNewCube+="L' "; break;
                 case 1: cube = MoveUPrime(cube); pathNewCube+="U' "; break;
@@ -32,7 +46,7 @@ public class Tools {
         return cube;
     }
     
-    public static BitSet moveCube(Long node, BitSet cubeArray){
+    public static byte[] moveCube(Long node, byte[] cubeArray){
         
         //long module = node%18;
         long module = node%6;//6
@@ -55,7 +69,7 @@ public class Tools {
         return null;
     }
     
-    public static BitSet moveCube(int tmp, BitSet cubeArray){
+    public static byte[] moveCube(int tmp, byte[] cubeArray){
         if (tmp==0) return MoveL(cubeArray);
         if (tmp==1) return MoveU(cubeArray);
         if (tmp==2) return MoveB(cubeArray);
@@ -67,7 +81,7 @@ public class Tools {
         return null;
     }
     
-    public static BitSet originalCube( ) 
+    public static byte[] originalCube( ) 
     {   //Create base cube:: UP LEFT FRONT RIGHT BACK DOWN
         // Face UP: White (000) 0:0-24
         // Face LEFT: Green (001) 24-48
@@ -75,121 +89,120 @@ public class Tools {
         // Face RIGTH: Blue (100) 72-96
         // Face BACK: ORANGE (110) 96-120
         // Face DOWN: Yellow (111) 120-144
-        
-        BitSet bitCube = new BitSet();
+        byte bitCube[] = new byte[18];
         //GREEEN
         for (int i = 26; i < 48; i+=3) {
-            bitCube.set(i);
+            setBit(i,true,bitCube);
         }
         //RED
         for (int i = 49; i < 72; i+=3) {
-            bitCube.set(i);
+            setBit(i,true,bitCube);
         }
         //BLUE
         for (int i = 72; i < 96; i+=3) {
-            bitCube.set(i);
+            setBit(i,true,bitCube);
         }
         //ORANGE
         for (int i = 96; i < 120; i+=3) {
-            bitCube.set(i);
-            bitCube.set(i+1);
+            setBit(i,true,bitCube);
+            setBit(i+1,true,bitCube);
         }
         //YELLOW
         for (int i = 120; i < 144; i++) {
-            bitCube.set(i);
+            setBit(i,true,bitCube);
         }
         return bitCube;
     }
     
-    private static void cBits(BitSet bitCube, BitSet current,
+    private static void cBits(byte[] bitCube, byte[] current,
             int x,int y,int z,int xp,int yp,int zp){
-        bitCube.set(x, current.get(xp));
-        bitCube.set(x+1, current.get(xp+1));
-        bitCube.set(x+2, current.get(xp+2));
-        bitCube.set(y, current.get(yp));
-        bitCube.set(y+1, current.get(yp+1));
-        bitCube.set(y+2, current.get(yp+2));
-        bitCube.set(z, current.get(zp));
-        bitCube.set(z+1, current.get(zp+1));
-        bitCube.set(z+2, current.get(zp+2));
+        setBit(x, getBit(xp,current),bitCube);
+        setBit(x+1, getBit(xp+1,current),bitCube);
+        setBit(x+2, getBit(xp+2,current),bitCube);
+        setBit(y, getBit(yp,current),bitCube);
+        setBit(y+1, getBit(yp+1,current),bitCube);
+        setBit(y+2, getBit(yp+2,current),bitCube);
+        setBit(z, getBit(zp,current),bitCube);
+        setBit(z+1, getBit(zp+1,current),bitCube);
+        setBit(z+2, getBit(zp+2,current),bitCube);
     }
     
-    private static void gFace(BitSet bitCube, BitSet current,int x){
+    private static void gFace(byte[] bitCube, byte[] current,int x){
         //ChangeCorners
-        bitCube.set(x, current.get(x+15));
-        bitCube.set(x+1, current.get(x+16));
-        bitCube.set(x+2, current.get(x+17));
+        setBit(x, getBit(x+15,current),bitCube);
+        setBit(x+1, getBit(x+16,current),bitCube);
+        setBit(x+2, getBit(x+17,current),bitCube);
         
-        bitCube.set(x+6, current.get(x));
-        bitCube.set(x+7, current.get(x+1));
-        bitCube.set(x+8, current.get(x+2));
+        setBit(x+6, getBit(x,current),bitCube);
+        setBit(x+7, getBit(x+1,current),bitCube);
+        setBit(x+8, getBit(x+2,current),bitCube);
         
-        bitCube.set(x+21, current.get(x+6));
-        bitCube.set(x+22, current.get(x+7));
-        bitCube.set(x+23, current.get(x+8));
+        setBit(x+21, getBit(x+6,current),bitCube);
+        setBit(x+22, getBit(x+7,current),bitCube);
+        setBit(x+23, getBit(x+8,current),bitCube);
         
-        bitCube.set(x+15, current.get(x+21));
-        bitCube.set(x+16, current.get(x+22));
-        bitCube.set(x+17, current.get(x+23));
+        setBit(x+15, getBit(x+21,current),bitCube);
+        setBit(x+16, getBit(x+22,current),bitCube);
+        setBit(x+17, getBit(x+23,current),bitCube);
         
         //ChageCenters
-        bitCube.set(x+3, current.get(x+9));
-        bitCube.set(x+4, current.get(x+10));
-        bitCube.set(x+5, current.get(x+11));
+        setBit(x+3, getBit(x+9,current),bitCube);
+        setBit(x+4, getBit(x+10,current),bitCube);
+        setBit(x+5, getBit(x+11,current),bitCube);
         
-        bitCube.set(x+9, current.get(x+18));
-        bitCube.set(x+10, current.get(x+19));
-        bitCube.set(x+11, current.get(x+20));
+        setBit(x+9, getBit(x+18,current),bitCube);
+        setBit(x+10, getBit(x+19,current),bitCube);
+        setBit(x+11, getBit(x+20,current),bitCube);
         
-        bitCube.set(x+18, current.get(x+12));
-        bitCube.set(x+19, current.get(x+13));
-        bitCube.set(x+20, current.get(x+14));
+        setBit(x+18, getBit(x+12,current),bitCube);
+        setBit(x+19, getBit(x+13,current),bitCube);
+        setBit(x+20, getBit(x+14,current),bitCube);
         
-        bitCube.set(x+12, current.get(x+3));
-        bitCube.set(x+13, current.get(x+4));
-        bitCube.set(x+14, current.get(x+5));
+        setBit(x+12, getBit(x+3,current),bitCube);
+        setBit(x+13, getBit(x+4,current),bitCube);
+        setBit(x+14, getBit(x+5,current),bitCube);
         
     }
     
-    private static void gFacePrime(BitSet bitCube, BitSet current,int x){
+    private static void gFacePrime(byte[] bitCube, byte[] current,int x){
         //ChangeCorners
-        bitCube.set(x, current.get(x+6));
-        bitCube.set(x+1, current.get(x+7));
-        bitCube.set(x+2, current.get(x+8));
+        setBit(x, getBit(x+6,current),bitCube);
+        setBit(x+1, getBit(x+7,current),bitCube);
+        setBit(x+2, getBit(x+8,current),bitCube);
         
-        bitCube.set(x+6, current.get(x+21));
-        bitCube.set(x+7, current.get(x+22));
-        bitCube.set(x+8, current.get(x+23));
+        setBit(x+6, getBit(x+21,current),bitCube);
+        setBit(x+7, getBit(x+22,current),bitCube);
+        setBit(x+8, getBit(x+23,current),bitCube);
         
-        bitCube.set(x+21, current.get(x+15));
-        bitCube.set(x+22, current.get(x+16));
-        bitCube.set(x+23, current.get(x+17));
+        setBit(x+21, getBit(x+15,current),bitCube);
+        setBit(x+22, getBit(x+16,current),bitCube);
+        setBit(x+23, getBit(x+17,current),bitCube);
         
-        bitCube.set(x+15, current.get(x));
-        bitCube.set(x+16, current.get(x+1));
-        bitCube.set(x+17, current.get(x+2));
+        setBit(x+15, getBit(x,current),bitCube);
+        setBit(x+16, getBit(x+1,current),bitCube);
+        setBit(x+17, getBit(x+2,current),bitCube);
         
         //ChageCenters
-        bitCube.set(x+3, current.get(x+12));
-        bitCube.set(x+4, current.get(x+13));
-        bitCube.set(x+5, current.get(x+14));
+        setBit(x+3, getBit(x+12,current),bitCube);
+        setBit(x+4, getBit(x+13,current),bitCube);
+        setBit(x+5, getBit(x+14,current),bitCube);
         
-        bitCube.set(x+9, current.get(x+3));
-        bitCube.set(x+10, current.get(x+4));
-        bitCube.set(x+11, current.get(x+5));
+        setBit(x+9, getBit(x+3,current),bitCube);
+        setBit(x+10, getBit(x+4,current),bitCube);
+        setBit(x+11, getBit(x+5,current),bitCube);
         
-        bitCube.set(x+18, current.get(x+9));
-        bitCube.set(x+19, current.get(x+10));
-        bitCube.set(x+20, current.get(x+11));
+        setBit(x+18, getBit(x+9,current),bitCube);
+        setBit(x+19, getBit(x+10,current),bitCube);
+        setBit(x+20, getBit(x+11,current),bitCube);
         
-        bitCube.set(x+12, current.get(x+18));
-        bitCube.set(x+13, current.get(x+19));
-        bitCube.set(x+14, current.get(x+20));
+        setBit(x+12, getBit(x+18,current),bitCube);
+        setBit(x+13, getBit(x+19,current),bitCube);
+        setBit(x+14, getBit(x+20,current),bitCube);
         
     }
     
-    public static BitSet MoveL(BitSet current){
-        BitSet bitCube = (BitSet)current.clone();
+    public static byte[] MoveL(byte[] current){
+        byte[] bitCube = (byte[])current.clone();
         
         cBits(bitCube, current, 0, 9, 15, 117, 108, 102);
         cBits(bitCube, current, 48, 57, 63, 0, 9, 15);
@@ -199,8 +212,8 @@ public class Tools {
         return bitCube;
     }
     
-    public static BitSet MoveLPrime(BitSet current){
-        BitSet bitCube = (BitSet)current.clone();
+    public static byte[] MoveLPrime(byte[] current){
+        byte[] bitCube = (byte[])current.clone();
         
         cBits(bitCube, current, 0, 9, 15, 48, 57, 63);
         cBits(bitCube, current, 48, 57, 63, 120, 129, 135);
@@ -210,8 +223,8 @@ public class Tools {
         return bitCube;
     }
     
-    public static BitSet MoveR(BitSet current){
-        BitSet bitCube = (BitSet)current.clone();
+    public static byte[] MoveR(byte[] current){
+        byte[] bitCube = (byte[])current.clone();
         cBits(bitCube, current, 6, 12, 21, 54, 60, 69);
         cBits(bitCube, current, 54, 60, 69, 126, 132, 141);
         cBits(bitCube, current, 126, 132, 141, 111, 105, 96);
@@ -220,8 +233,8 @@ public class Tools {
         return bitCube;
     }
     
-    public static BitSet MoveRPrime(BitSet current){
-        BitSet bitCube = (BitSet)current.clone();
+    public static byte[] MoveRPrime(byte[] current){
+        byte[] bitCube = (byte[])current.clone();
         cBits(bitCube, current, 6, 12, 21, 111, 105, 96);
         cBits(bitCube, current, 54, 60, 69, 6, 12, 21);
         cBits(bitCube, current, 126, 132, 141, 54, 60, 69);
@@ -230,8 +243,8 @@ public class Tools {
         return bitCube;
     }
     
-    public static BitSet MoveU(BitSet current){
-        BitSet bitCube = (BitSet)current.clone();
+    public static byte[] MoveU(byte[] current){
+        byte[] bitCube = (byte[])current.clone();
         cBits(bitCube, current, 24, 27, 30, 48, 51, 54);
         cBits(bitCube, current, 48, 51, 54, 72, 75, 78);
         cBits(bitCube, current, 72, 75, 78, 96, 99, 102);
@@ -240,18 +253,18 @@ public class Tools {
         return bitCube;
     }
     
-    public static BitSet MoveUPrime(BitSet current){
-        BitSet bitCube = (BitSet)current.clone();
+    public static byte[] MoveUPrime(byte[] current){
+        byte[] bitCube = (byte[])current.clone();
         cBits(bitCube, current, 24, 27, 30, 96, 99, 102);
-        cBits(bitCube, current, 48, 51, 54, 24, 27, 78);
+        cBits(bitCube, current, 48, 51, 54, 24, 27, 30);
         cBits(bitCube, current, 72, 75, 78, 48, 51, 54);
         cBits(bitCube, current, 96, 99, 102, 72, 75, 78);
         gFacePrime(bitCube, current, 0); //Init Right
         return bitCube;
     }
     
-    public static BitSet MoveD(BitSet current){
-        BitSet bitCube = (BitSet)current.clone();
+    public static byte[] MoveD(byte[] current){
+        byte[] bitCube = (byte[])current.clone();
         cBits(bitCube, current, 39, 42, 45, 111, 114, 117);
         cBits(bitCube, current, 63, 66, 69, 39, 42, 45);
         cBits(bitCube, current, 87, 90, 93, 63, 66, 69);
@@ -260,8 +273,8 @@ public class Tools {
         return bitCube;
     }
     
-    public static BitSet MoveDPrime(BitSet current){
-        BitSet bitCube = (BitSet)current.clone();
+    public static byte[] MoveDPrime(byte[] current){
+        byte[] bitCube = (byte[])current.clone();
         cBits(bitCube, current, 39, 42, 45, 63, 66, 69);
         cBits(bitCube, current, 63, 66, 69, 87, 90, 93);
         cBits(bitCube, current, 87, 90, 93, 111, 114, 117);
@@ -270,8 +283,8 @@ public class Tools {
         return bitCube;
     }
     
-    public static BitSet MoveF(BitSet current){
-        BitSet bitCube = (BitSet)current.clone();
+    public static byte[] MoveF(byte[] current){
+        byte[] bitCube = (byte[])current.clone();
         cBits(bitCube, current, 15, 18, 21, 45, 36, 30);
         cBits(bitCube, current, 72, 81, 87, 15, 18, 21);
         cBits(bitCube, current, 126, 123, 120, 72, 81, 87);
@@ -280,8 +293,8 @@ public class Tools {
         return bitCube;
     }
     
-    public static BitSet MoveFPrime(BitSet current){
-        BitSet bitCube = (BitSet)current.clone();
+    public static byte[] MoveFPrime(byte[] current){
+        byte[] bitCube = (byte[])current.clone();
         cBits(bitCube, current, 15, 18, 21, 72, 81, 87);
         cBits(bitCube, current, 72, 81, 87, 126, 123, 120);
         cBits(bitCube, current, 126, 123, 120, 45, 36, 30);
@@ -290,8 +303,8 @@ public class Tools {
         return bitCube;
     }
     
-    public static BitSet MoveB(BitSet current){
-        BitSet bitCube = (BitSet)current.clone();
+    public static byte[] MoveB(byte[] current){
+        byte[] bitCube = (byte[])current.clone();
         cBits(bitCube, current, 0, 3, 6, 78, 84, 93);
         cBits(bitCube, current, 78, 84, 93, 141, 138, 135);
         cBits(bitCube, current, 141, 138, 135, 39, 33, 24);
@@ -300,8 +313,8 @@ public class Tools {
         return bitCube;
     }
     
-    public static BitSet MoveBPrime(BitSet current){
-        BitSet bitCube = (BitSet)current.clone();
+    public static byte[] MoveBPrime(byte[] current){
+        byte[] bitCube = (byte[])current.clone();
         cBits(bitCube, current, 0, 3, 6, 39, 33, 24);
         cBits(bitCube, current, 78, 84, 93, 0, 3, 6);
         cBits(bitCube, current, 141, 138, 135, 78, 84, 93);
@@ -310,10 +323,10 @@ public class Tools {
         return bitCube;
     }
     
-    public static String printRubiks (BitSet current){
+    public static String printRubiks (byte[] current){
         String text = "";
         for (int i = 0; i < 144; i++) {
-            boolean tmp = current.get(i);
+            boolean tmp = getBit(i,current);
             if (tmp) text+="1 ";
             else text+="0 ";
             if (i%3==2) text+="| ";

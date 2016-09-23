@@ -17,7 +17,7 @@ import java.util.BitSet;
 
 public class RubiksCube_A {
     
-    private BitSet bitCube = new BitSet();
+    private byte[] bitCube = new byte[18];
     private int nameNode;
     
     public RubiksCube_A( ) 
@@ -31,29 +31,29 @@ public class RubiksCube_A {
         
         //GREEEN
         for (int i = 26; i < 48; i+=3) {
-            bitCube.set(i);
+            Tools.setBit(i,true,bitCube);
         }
         //RED
         for (int i = 49; i < 72; i+=3) {
-            bitCube.set(i);
+            Tools.setBit(i,true,bitCube);
         }
         //BLUE
         for (int i = 72; i < 96; i+=3) {
-            bitCube.set(i);
+            Tools.setBit(i,true,bitCube);
         }
         //ORANGE
         for (int i = 96; i < 120; i+=3) {
-            bitCube.set(i);
-            bitCube.set(i+1);
+            Tools.setBit(i,true,bitCube);
+            Tools.setBit(i+1,true,bitCube);
         }
         //YELLOW
         for (int i = 120; i < 144; i++) {
-            bitCube.set(i);
+            Tools.setBit(i,true,bitCube);
         }
         
     }
     
-    public RubiksCube_A( BitSet bitCube, int nameNode ) 
+    public RubiksCube_A( byte[] bitCube, int nameNode ) 
     {
         this.bitCube = bitCube;
         this.nameNode = nameNode;
@@ -62,7 +62,7 @@ public class RubiksCube_A {
     public String printRubiks (){
         String text = "";
         for (int i = 0; i < 144; i++) {
-            boolean tmp = getBitCube().get(i);
+            boolean tmp = Tools.getBit(i, getBitCube());
             if (tmp) text+="1 ";
             else text+="0 ";
             if (i%3==2) text+="| ";
@@ -71,23 +71,23 @@ public class RubiksCube_A {
         return text;
     }
     
-    public static void main (String []args){
-        RubiksCube_A cube = new RubiksCube_A();
-        System.out.println(Tools.printRubiks(cube.getBitCube()));
-        System.out.println(Tools.printRubiks(Tools.MoveL(cube.getBitCube())));
-    }
+//    public static void main (String []args){
+//        RubiksCube_A cube = new RubiksCube_A();
+//        System.out.println(Tools.printRubiks(cube.getBitCube()));
+//        System.out.println(Tools.printRubiks(Tools.MoveL(cube.getBitCube())));
+//    }
 
     /**
      * @return the bitCube
      */
-    public BitSet getBitCube() {
+    public byte[] getBitCube() {
         return bitCube;
     }
 
     /**
      * @param bitCube the bitCube to set
      */
-    public void setBitCube(BitSet bitCube) {
+    public void setBitCube(byte[] bitCube) {
         this.bitCube = bitCube;
     }
 

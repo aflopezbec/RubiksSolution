@@ -13,52 +13,49 @@ import java.util.logging.Logger;
  */
 public class Graph_A {
     
-    public void BFS (long position, BitSet problem, long NodesLevels,BitSet original){
-        Queue<BitSet> quedeBFS = new LinkedList<>();
-        Queue<BitSet> newquedeBFS = new LinkedList<>();
+    public void BFS (long position, byte[] problem, long NodesLevels,byte[] original){
+        System.out.println("BFS IN");
+        Queue<byte[]> quedeBFS = new LinkedList<>();
         //Runtime garbage = Runtime.getRuntime();
         //problem.printArrayCube();
         quedeBFS.add(problem);
         long iter = 2;
         long cursor = 0;
         //cursor<=NodesLevels &&
-        BitSet rc;
+        System.out.println("i:"+iter+" pos: "+position);
+        byte[] rc;
         while( cursor < NodesLevels && !quedeBFS.isEmpty()){
-            rc = quedeBFS.remove();
-            newquedeBFS.add(rc);              
+            rc = quedeBFS.remove();            
             //garbage.gc();
             cursor++;
-            if(original.equals(rc)){                
+            if(Arrays.equals(original, rc)){                
                 System.out.println("----------------------------------------");
                 System.out.println("Solucion en el nodo: "+cursor);
                 System.out.println("Solución: "+path(cursor));
                 System.out.println("----------------------------------------");
                 break;
             }            
-            if(iter != position && quedeBFS.isEmpty()){
+            if(iter < NodesLevels ){
                 int coun = 0;
-                while (!newquedeBFS.isEmpty()){
-                    rc = newquedeBFS.remove();
-                    for (int i = 0; i < 6; i++) {
-                        coun++;
-                    //System.out.println("i: "+iter); 
-                    
-                    quedeBFS.add(Tools.moveCube(i,rc));
-                    iter++;
-                    }
+                for (int i = 0; i < 6; i++) {
+                    coun++;
+                //System.out.println("i: "+iter); 
+                quedeBFS.add(Tools.moveCube(i,rc));
+                iter++;
                 }                              
             }
         }
+        System.out.println("c: "+cursor);
     }
     
-   public boolean DFS (long position, BitSet problem, long NodesLevels, int level,BitSet original){
+   public boolean DFS (long position, byte[] problem, long NodesLevels, int level,byte[] original){
         
         Stack stack = new Stack();
         //System.out.print("problem: ");
         //tools.printArrayCube(problem);
         stack.push(problem);
         
-        BitSet tmp;
+        byte[] tmp;
         
         long cursor = 0;
         int countlevel = 0;
@@ -67,9 +64,9 @@ public class Graph_A {
         int positionmove = 1;
         
         while (cursor < NodesLevels && !stack.isEmpty()){
-            tmp = (BitSet) stack.pop();
+            tmp = (byte[]) stack.pop();
             //tools.printArrayCube(tmp);
-            if(original.equals(tmp)){
+            if(Arrays.equals(original, tmp)){
                 System.out.println("----------------------------------------");
                 System.out.println("Solucion en el nodo: "+cursor);
                 System.out.println("----------------------------------------");
@@ -113,7 +110,7 @@ public class Graph_A {
         //System.out.println("CO: "+cursor);
     }
         
-    public void DFSIterative (long position, BitSet problem, long NodesLevels, int maxlevel,BitSet original){
+    public void DFSIterative (long position, byte[] problem, long NodesLevels, int maxlevel,byte[] original){
         for (int i = 1; i <= maxlevel; i++) {
             long TInicio, TFin, tiempo; //Variables para determinar el tiempo de ejecución
             TInicio = System.currentTimeMillis(); 
@@ -129,10 +126,12 @@ public class Graph_A {
         }
     }
     
-    public void AStar (long position, BitSet problem, long NodesLevels, int level,BitSet original){
+    public void AStar (long position, byte[] problem, long NodesLevels, int level,byte[] original){
         Stack stack = new Stack();
         stack.push(new RubiksCube_A(problem,1));
-        
+        System.out.println("Cubo a resolver");
+        System.out.println(Tools.printRubiks(problem));
+        System.out.println("");
         RubiksCube_A tmp = null;
         
         long cursor = 0;
@@ -142,10 +141,10 @@ public class Graph_A {
         boolean flag=true;        
         
         while (cursor < NodesLevels && !stack.isEmpty()){
-            tmp = (RubiksCube_A) stack.pop();
-            //System.out.println(fatherNode(tmp.getNameNode())+"|"+numberMove(fatherNode(tmp.getNameNode()))+" tmp: "+tmp.getNameNode()+"|"+numberMove(tmp.getNameNode())+" Levels:"+countlevel+"|"+level);
+            tmp = (RubiksCube_A) stack.pop();         
+            
             flag=true;
-            if(original.equals(tmp.getBitCube())){
+            if(Arrays.equals(original, tmp.getBitCube())){
                 System.out.println("----------------------------------------");
                 System.out.println("Solucion en el nodo: "+tmp.getNameNode());
                 System.out.println("----------------------------------------");
@@ -154,15 +153,8 @@ public class Graph_A {
                 break;
             }
             
-//            if(contraryMove(numberMove(fatherNode(tmp.getNameNode())),numberMove(tmp.getNameNode()))){
-//                flag = false;
-//                //System.out.println(fatherNode(tmp.getNameNode())+"-"+tmp.getNameNode()+"|"+numberMove(fatherNode(tmp.getNameNode()))+"-"
-//                  //      +numberMove(tmp.getNameNode())+"--"+level+"|"+stack.size());
-//            }
-            
             if(countlevel < level ){
-                //System.out.println("N: "+tmp.getNameNode());
-                countlevel++;
+                 countlevel++;
                 padre = tmp.getNameNode();
                 for (int i = 5; i >= 0; i--) {
                     stack.push(new RubiksCube_A(Tools.moveCube(i,tmp.getBitCube()),positionNode(padre, i)));
@@ -173,7 +165,6 @@ public class Graph_A {
                 countlevel--;
                 padre = fatherNode(tmp.getNameNode());
                 while (positionNode(fatherNode(padre), 5) == padre){
-                    //System.out.println("-----------");
                     padre = fatherNode(padre);
                     countlevel--;
                 }
@@ -228,19 +219,6 @@ public class Graph_A {
                 case 3: return "D ";
                 case 4: return "F ";
                 case 5: return "R ";
-                //case 1: return "LP ";
-                //case 3: return "BP ";
-                //case 5: return "DP ";
-                //case 6: return "E ";
-                //case 7: return "EP ";
-                //case 9: return "FP ";
-                //case 10: return "M ";
-                //case 11: return "MP ";
-                //case 13: return "RP "; 
-                //case 14: return "S "; 
-                //case 15: return "SP ";
-                //case 16: return "U "; 
-                //case 17: return "UP ";
             }
         return null;
     }
