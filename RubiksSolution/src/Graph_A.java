@@ -48,7 +48,7 @@ public class Graph_A {
         System.out.println("c: "+cursor);
     }
     
-   public boolean DFS (long position, byte[] problem, long NodesLevels, int level,byte[] original){
+    public boolean DFS (long position, byte[] problem, long NodesLevels, int level,byte[] original){
         
         Stack stack = new Stack();
         //System.out.print("problem: ");
@@ -126,17 +126,17 @@ public class Graph_A {
         }
     }
     
-    public void AStar (long position, byte[] problem, long NodesLevels, int level,byte[] original){
+    public boolean AStar (int position, byte[] problem, long NodesLevels, int level,byte[] original){
         Stack stack = new Stack();
-        stack.push(new RubiksCube_A(problem,1));
-        System.out.println("Cubo a resolver");
-        System.out.println(Tools.printRubiks(problem));
-        System.out.println("");
+        stack.push(new RubiksCube_A(problem,position));
+        //System.out.println("Cubo a resolver "+position);
+        //System.out.println(Tools.printRubiks(problem));
+        //System.out.println("");
         RubiksCube_A tmp = null;
         
         long cursor = 0;
         int countlevel = 0;
-        int padre = 0;
+        int padre = position;
         
         boolean flag=true;        
         
@@ -150,7 +150,7 @@ public class Graph_A {
                 System.out.println("----------------------------------------");
                 System.out.println("Solución: "+path(tmp.getNameNode()));
                 System.out.println("----------------------------------------");
-                break;
+                return true;
             }
             
             if(countlevel < level ){
@@ -171,7 +171,22 @@ public class Graph_A {
             }
             cursor++;            
         }
-        System.out.println("c: "+cursor+" level:"+countlevel+" tmp:"+tmp.getNameNode());
+        //System.out.println("c: "+cursor+" level:"+countlevel+" tmp:"+tmp.getNameNode());
+        return false;
+    }
+    
+    public void AStar (long position, byte[] problem, long NodesLevels, int level,byte[] original,int a){
+        Proceso[] p = new Proceso[6];
+        for (int i = 0; i < 6; i++) {
+            Proceso hilo1 = new Proceso("Hilo "+(i+1),i,problem,NodesLevels,level,original,i);
+            p[i]=hilo1;
+        }
+        for (int i = 0; i < 6; i++) {
+            p[i].setArrayProcess(p);
+        }
+        for (int i = 0; i < 6; i++) {
+            p[i].start();
+        }
     }
     
     public int positionNode(int node, int move){

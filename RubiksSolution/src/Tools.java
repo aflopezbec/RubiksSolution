@@ -335,5 +335,8 @@ public class Tools {
         return text;
     }
     
-    
+    public static int positionNode(int node, int move){
+        //System.out.println("pos: "+((18*(node-1))+2+move)+" - "+move);
+        return ((6*(node-1))+2+move);
+    }
 }
