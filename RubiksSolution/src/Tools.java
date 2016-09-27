@@ -339,4 +339,67 @@ public class Tools {
         //System.out.println("pos: "+((18*(node-1))+2+move)+" - "+move);
         return ((6*(node-1))+2+move);
     }
+    
+    public static int costFace (int iFace,byte[] current ){
+        int cost = 0;
+        
+        if((getBit(iFace,current)==getBit(iFace+3,current) && getBit(iFace+3,current)==getBit(iFace+6,current))
+            && (getBit(iFace+1,current)==getBit(iFace+4,current) && getBit(iFace+4,current)==getBit(iFace+7,current))
+            && (getBit(iFace+2,current)==getBit(iFace+5,current) && getBit(iFace+5,current)==getBit(iFace+8,current))){
+            //System.out.println("print1");
+            cost++;
+        }    
+        
+        if(getBit(iFace,current)==getBit(iFace+9,current) && getBit(iFace+9,current)==getBit(iFace+15,current)
+            && getBit(iFace+1,current)==getBit(iFace+10,current) && getBit(iFace+10,current)==getBit(iFace+16,current)
+            && getBit(iFace+2,current)==getBit(iFace+11,current) && getBit(iFace+11,current)==getBit(iFace+17,current)){
+            //System.out.println("print2");
+            cost++;
+        }
+        
+        if(getBit(iFace+15,current)==getBit(iFace+18,current) && getBit(iFace+18,current)==getBit(iFace+21,current)
+            && getBit(iFace+16,current)==getBit(iFace+19,current) && getBit(iFace+19,current)==getBit(iFace+22,current)
+            && getBit(iFace+17,current)==getBit(iFace+20,current) && getBit(iFace+20,current)==getBit(iFace+23,current)){
+            //System.out.println("print3");
+            cost++;
+        }
+        
+        if(getBit(iFace+6,current)==getBit(iFace+12,current) && getBit(iFace+12,current)==getBit(iFace+21,current)
+            && getBit(iFace+7,current)==getBit(iFace+13,current) && getBit(iFace+13,current)==getBit(iFace+22,current)
+            && getBit(iFace+8,current)==getBit(iFace+14,current) && getBit(iFace+14,current)==getBit(iFace+23,current)){
+            //System.out.println("print4");
+            cost++;
+        }
+        
+        boolean center = false;
+        if(iFace==48 || iFace==96 || iFace==120) center = true;
+        
+        if(getBit(iFace+3,current)==center && center==getBit(iFace+18,current)
+            && getBit(iFace+4,current)==center && center==getBit(iFace+19,current)
+            && getBit(iFace+5,current)==center && center==getBit(iFace+20,current))
+            cost++;
+            
+        if(getBit(iFace+9,current)==center && center==getBit(iFace+12,current)
+        && getBit(iFace+10,current)==center && center==getBit(iFace+13,current)
+        && getBit(iFace+11,current)==center && center==getBit(iFace+14,current))
+        cost++;
+                
+        return cost;
+    }
+    
+    public static int costPosition (int iFace,byte[] current){
+        
+        return 0;
+    }
+    
+    public static int costNode(byte[] current){
+        int cost = 24;
+        cost = cost - costFace(0, current);
+        cost = cost - costFace(24, current);
+        cost = cost - costFace(48, current);
+        cost = cost - costFace(72, current);
+        cost = cost - costFace(96, current);
+        cost = cost - costFace(120, current);
+        return cost;
+    }
 }

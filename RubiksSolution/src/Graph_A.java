@@ -2,6 +2,7 @@
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.LinkedList;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Stack;
 import java.util.logging.Level;
@@ -12,6 +13,8 @@ import java.util.logging.Logger;
  * @author AnDresLoPz
  */
 public class Graph_A {
+    
+    private Queue<RubiksCube_A> quedeCube = new PriorityQueue<>();
     
     public void BFS (long position, byte[] problem, long NodesLevels,byte[] original){
         System.out.println("BFS IN");
@@ -59,9 +62,9 @@ public class Graph_A {
         
         long cursor = 0;
         int countlevel = 0;
-        int padre = 1;
+        long padre = 1;
         byte hijos = 0;
-        int positionmove = 1;
+        long positionmove = 1;
         
         while (cursor < NodesLevels && !stack.isEmpty()){
             tmp = (byte[]) stack.pop();
@@ -126,23 +129,34 @@ public class Graph_A {
         }
     }
     
-    public boolean AStar (int position, byte[] problem, long NodesLevels, int level,byte[] original){
+    public RubiksCube_A AStar (long position, byte[] problem, long NodesLevels, int level,byte[] original,int initialcost){
         Stack stack = new Stack();
-        stack.push(new RubiksCube_A(problem,position));
+        RubiksCube_A best = new RubiksCube_A(problem,position);
+        stack.push(best);
         //System.out.println("Cubo a resolver "+position);
         //System.out.println(Tools.printRubiks(problem));
         //System.out.println("");
         RubiksCube_A tmp = null;
+        int bestCost = initialcost;
+        int tmpcost = 0;
         
         long cursor = 0;
         int countlevel = 0;
-        int padre = position;
+        long padre = position;
         
         boolean flag=true;        
-        
         while (cursor < NodesLevels && !stack.isEmpty()){
-            tmp = (RubiksCube_A) stack.pop();         
-            
+            tmp = (RubiksCube_A) stack.pop();
+            tmpcost = Tools.costNode(tmp.getBitCube());
+            //System.out.println(tmpcost);
+            if(bestCost>tmpcost){
+                best = tmp;
+                bestCost = tmpcost;
+                tmp.setCost(tmpcost);
+                if (cursor != 0) quedeCube.add(tmp);
+                System.out.println("-|"+tmp.getCost()+"|"+tmp.getNameNode());
+            }
+                
             flag=true;
             if(Arrays.equals(original, tmp.getBitCube())){
                 System.out.println("----------------------------------------");
@@ -150,7 +164,7 @@ public class Graph_A {
                 System.out.println("----------------------------------------");
                 System.out.println("Solución: "+path(tmp.getNameNode()));
                 System.out.println("----------------------------------------");
-                return true;
+                return null;
             }
             
             if(countlevel < level ){
@@ -172,10 +186,12 @@ public class Graph_A {
             cursor++;            
         }
         //System.out.println("c: "+cursor+" level:"+countlevel+" tmp:"+tmp.getNameNode());
-        return false;
+        best.setCost(bestCost);
+        System.out.println("Ultimate cost "+bestCost);
+        return best;
     }
     
-    public void AStar (long position, byte[] problem, long NodesLevels, int level,byte[] original,int a){
+    public void AStar (long position, byte[] problem, long NodesLevels, int level,byte[] original,int a,boolean h){
         Proceso[] p = new Proceso[6];
         for (int i = 0; i < 6; i++) {
             Proceso hilo1 = new Proceso("Hilo "+(i+1),i,problem,NodesLevels,level,original,i);
@@ -189,15 +205,42 @@ public class Graph_A {
         }
     }
     
-    public int positionNode(int node, int move){
+    public void AStarlevel (long position, byte[] problem, long NodesLevels, int maxlevel,byte[] original){
+        
+        
+        byte[] newproblem =problem;
+        int level = 4;
+        long newposition = position;
+        int count = 0;
+        int initialcost = 24;
+        
+        long nodelevel = (long)((Math.pow(6, level+1)-1)/(6-1));        
+        RubiksCube_A cube = AStar(newposition, newproblem, nodelevel, level, original,initialcost);
+        
+        while (cube != null){
+            System.out.println("Nodes: "+nodelevel+" | "+cube.getNameNode()+" | "+cube.getCost());
+            newposition = cube.getNameNode();
+            newproblem = cube.getBitCube();
+            initialcost = cube.getCost();
+            if (!quedeCube.isEmpty()){
+                cube = quedeCube.remove();
+            }
+            cube = AStar(newposition, cube.getBitCube(), nodelevel, level, original,cube.getCost());
+            count++;
+        } 
+        System.out.println("Count: "+count);
+    }
+    
+    
+    public long positionNode(long node, int move){
         //System.out.println("pos: "+((18*(node-1))+2+move)+" - "+move);
         return ((6*(node-1))+2+move);
     }
     
-    public int fatherNode(int node){
+    public long fatherNode(long node){
         //System.out.println("pos: "+((18*(node-1))+2+move)+" - "+move);
-        int module = node%6;
-        int tmp = 0;
+        long module = node%6;
+        long tmp = 0;
         if (module == 0) tmp=4;
         else if (module == 1) tmp=5;
         else tmp = module-2;

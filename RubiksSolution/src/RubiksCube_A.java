@@ -15,12 +15,13 @@ import java.util.BitSet;
 //bits total 54*3 == 162
 //bits without centers 48*3 = 144
 
-public class RubiksCube_A {
+public class RubiksCube_A implements Comparable<RubiksCube_A>{
     
     private byte[] bitCube = new byte[18];
-    private int nameNode;
+    private long nameNode;
+    private int cost;
     
-    public RubiksCube_A( ) 
+    public RubiksCube_A ( ) 
     {   //Create base cube:: UP LEFT FRONT RIGHT BACK DOWN
         // Face UP: White (000) 0:0-24
         // Face LEFT: Green (001) 24-48
@@ -53,7 +54,7 @@ public class RubiksCube_A {
         
     }
     
-    public RubiksCube_A( byte[] bitCube, int nameNode ) 
+    public RubiksCube_A( byte[] bitCube, long nameNode) 
     {
         this.bitCube = bitCube;
         this.nameNode = nameNode;
@@ -94,14 +95,35 @@ public class RubiksCube_A {
     /**
      * @return the nameNode
      */
-    public int getNameNode() {
+    public long getNameNode() {
         return nameNode;
     }
 
     /**
      * @param nameNode the nameNode to set
      */
-    public void setNameNode(int nameNode) {
+    public void setNameNode(long nameNode) {
         this.nameNode = nameNode;
+    }
+
+    /**
+     * @return the cost
+     */
+    public int getCost() {
+        return cost;
+    }
+
+    /**
+     * @param cost the cost to set
+     */
+    public void setCost(int cost) {
+        this.cost = cost;
+    }
+
+    @Override
+    public int compareTo(RubiksCube_A o) {
+        if (this.getCost() < o.getCost()) return -1;
+        if (this.getCost() > o.getCost()) return 1;
+        return 0;
     }
 }

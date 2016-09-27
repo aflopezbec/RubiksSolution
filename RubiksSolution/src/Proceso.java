@@ -39,9 +39,9 @@ public class Proceso extends Thread{
     {
         Graph_A g = new Graph_A();
         //System.out.println(mensaje+"-"+"-"+node+"|"+Tools.positionNode(1, node)+"|"+level);
-        boolean tmp = g.AStar(Tools.positionNode(1, node), Tools.moveCube(node, problem), NodesLevels, level, original);
+        RubiksCube_A tmp = g.AStar(Tools.positionNode(1, node), Tools.moveCube(node, problem), NodesLevels, level, original,(byte)0);
         
-        if (tmp){
+        if (tmp==null){
             System.out.println("Solucion en "+mensaje);
             for (int i = 0; i<6;i++) {
                 if (i != thread){
